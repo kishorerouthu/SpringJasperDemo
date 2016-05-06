@@ -1,0 +1,63 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+    <context:component-scan base-package="com.wavemaker.jasper.controller, com.wavemaker.jasper.dao"/>
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix">
+            <value>/WEB-INF/pages/</value>
+        </property>
+        <property name="suffix">
+            <value>.jsp</value>
+        </property>
+    </bean>
+
+
+    <bean id="propertyPlaceholder" class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:app.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+          destroy-method="close"
+          p:driverClass="${db.driverClassName}"
+          p:jdbcUrl="${db.connectionUrl}"
+          p:user="${db.username}"
+          p:password="${db.password}"
+          p:minPoolSize="10"
+          p:maxPoolSize="50"
+          p:maxIdleTime="600"
+          p:maxStatements="250"
+          p:maxStatementsPerConnection="50"
+          p:checkoutTimeout="10000"
+          p:idleConnectionTestPeriod="300"
+          p:unreturnedConnectionTimeout="300"
+          p:debugUnreturnedConnectionStackTraces="true"
+          p:acquireIncrement="3"
+          p:acquireRetryAttempts="3"
+          p:acquireRetryDelay="1000"/>
+
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan"  value="com.wavemaker"/>
+        <property name="hibernateProperties">
+            <value>
+                hibernate.dialect=${hibernate.dialect}
+            </value>
+        </property>
+
+    </bean>
+
+</beans>
